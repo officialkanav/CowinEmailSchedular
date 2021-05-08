@@ -9,16 +9,21 @@ import json
 import smtplib
 import time
 
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) \
+        Chrome/56.0.2924.76 Safari/537.36', "Upgrade-Insecure-Requests": "1","DNT": "1","Accept": "text/html,\
+        application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Language": "en-US,en;q=0.5",\
+        "Accept-Encoding": "gzip, deflate"}
+
 def print_states():
   states_url = 'https://cdn-api.co-vin.in/api/v2/admin/location/states'
-  r = requests.get(states_url).content.decode('utf8').replace("'", '"')
+  r = requests.get(states_url, headers=headers).content.decode('utf8').replace("'", '"')
   states = json.loads(r)
   for state in states['states']:
     print(state['state_name'], ': ', state['state_id'])
 
 def print_districts(state_id):
   districts_url = 'https://cdn-api.co-vin.in/api/v2/admin/location/districts/%s' %(state_id)
-  r = requests.get(districts_url).content.decode('utf8').replace("'", '"')
+  r = requests.get(districts_url, headers=headers).content.decode('utf8').replace("'", '"')
   districts = json.loads(r)
   for district in districts['districts']:
     print(district['district_name'], ': ', district['district_id'])
@@ -46,7 +51,7 @@ def start(district_id, email, min_age):
     body = []
     today = date.today()
     request_url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=%s&date=%s' %(district_id, today.strftime("%d-%m-%Y"))
-    r = requests.get(request_url).content.decode('utf8').replace("'", '"')
+    r = requests.get(request_url, headers=headers).content.decode('utf8').replace("'", '"')
     data = json.loads(r)
     centers = data['centers']
     for center in centers:
